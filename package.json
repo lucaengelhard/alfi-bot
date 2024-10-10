@@ -18,7 +18,8 @@
     "build": "tsup",
     "lint": "tsc",
     "test": "jest --silent=false",
-    "release": "pnpm run build && changeset publish"
+    "release": "pnpm run build && changeset publish",
+    "run": "pnpm run build && node ."
   },
   "publishConfig": {
     "access": "public"
@@ -35,6 +36,8 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "discord.js": "^14.16.3",
     "dotenv": "^16.4.5"
   }
 }
