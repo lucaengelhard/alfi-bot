@@ -10,8 +10,8 @@ import {
   TextChannel,
   VoiceChannel,
 } from "discord.js";
-import { flags, model } from ".";
-import { ananasCopyPasta, ananasItaly } from "./content";
+import { flags, model } from "./index.js";
+import { ananasCopyPasta, ananasItaly } from "./content.js";
 
 /**
  *

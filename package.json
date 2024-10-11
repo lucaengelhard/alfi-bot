@@ -1,6 +1,7 @@
 {
   "name": "alfi-bot",
   "author": "Luca Engelhard",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/lucaengelhard/alfi-bot/issues"
   },

@@ -1,8 +1,8 @@
 import "dotenv/config";
-import { startHealthChecks } from "./health";
+import { startHealthChecks } from "./health.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Client, Events, GatewayIntentBits } from "discord.js";
-import { handleMessage } from "./messages";
+import { handleMessage } from "./messages.js";
 
 /**
  * SETUP
