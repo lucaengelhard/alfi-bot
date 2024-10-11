@@ -1,4 +1,7 @@
 import "dotenv/config";
+
+import express from "express";
+
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ananasCopyPasta, ananasItaly } from "./content";
@@ -30,6 +33,8 @@ client.login(token);
  * TODO: Schlafenszeiten des Bots (Meinte Alfi nicht, dass er zwischen 4 und 8 schläft? -> botreaktionen daktiviert oder fangen damit an, dass er eigentslich schon schlafen will)
  *
  * TODO: Alfi geht auf vorherige nachrichten ein
+ *
+ * TODO: besseres logging (von welchem Server kommt die Anfrage, was ist die Anfrage etc.)
  *
  */
 
@@ -132,3 +137,14 @@ function pappnasen() {
     }
   });
 }
+
+// Health checks
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("healthy");
+});
+
+app.listen(8000, () => {
+  console.log("Server running on port 8000");
+});
