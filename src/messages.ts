@@ -1,0 +1,145 @@
+import {
+  DMChannel,
+  Message,
+  NewsChannel,
+  OmitPartialGroupDMChannel,
+  PartialDMChannel,
+  PrivateThreadChannel,
+  PublicThreadChannel,
+  StageChannel,
+  TextChannel,
+  VoiceChannel,
+} from "discord.js";
+import { flags, model } from ".";
+import { ananasCopyPasta, ananasItaly } from "./content";
+
+/**
+ *
+ * @param message Das Message-Objekt
+ * @param bots boolean, der definiert, on bot-messages auch verarbeitet werden sollen
+ */
+export async function handleMessage(
+  message: OmitPartialGroupDMChannel<Message<boolean>>,
+  bots?: boolean
+) {
+  if (message.author.bot && bots === false) {
+    console.log("Bot Message");
+    return;
+  }
+  console.log(`Recieved Message: ${message.content}`);
+
+  const messageString = message.content;
+  const ananas = istAnanasAufPizza(messageString);
+
+  let resultString = "Hey Sorry ich weiß auch nicht";
+
+  // check if "hey alfi" -> exit function early
+  if (checkHeyAlfi(messageString)) {
+    resultString = await llmAnswer({
+      ananas,
+      messageString,
+    });
+
+    send({ channel: message.channel, message: resultString });
+    return;
+  }
+
+  if (ananas) {
+    if (Math.random() > 0.5) {
+      send({ channel: message.channel, message: ananasItaly });
+    } else {
+      send({ channel: message.channel, message: ananasCopyPasta });
+    }
+  }
+
+  if (flags.bangerReady && Math.random() > 0.5) {
+    send({
+      channel: message.channel,
+      message: "Banger Nachricht die du da geschrieben hast",
+    });
+    flags.bangerReady = false;
+  }
+}
+
+type Channel =
+  | DMChannel
+  | PartialDMChannel
+  | NewsChannel
+  | StageChannel
+  | TextChannel
+  | PublicThreadChannel<boolean>
+  | PrivateThreadChannel
+  | VoiceChannel;
+
+export function send({
+  channel,
+  message,
+}: {
+  channel: Channel;
+  message: string;
+}) {
+  const truncated = message.substring(0, 2000);
+
+  try {
+    channel.send(truncated);
+    console.log(`Message ${truncated} sent to:`); //TODO: Logging von Server und Channel)
+  } catch (error) {
+    console.error(`Error while sending Message ${truncated} to:`); //TODO: Logging von Server und Channel)
+    channel.send("Hey Sorry ich weiß auch nicht");
+  }
+}
+
+function checkHeyAlfi(messageString: string) {
+  const splitMessageString = messageString.split(" ");
+  const hey = splitMessageString[0]?.toLowerCase();
+  const alfi = splitMessageString[1]?.toLowerCase();
+
+  if (hey === undefined || alfi === undefined) return false;
+  if (!["hey", "heey", "heyy", "heeyy", "hei"].includes(hey)) return false; //TODO: Mehr schreibweisen?
+  if (!["alfi", "alfii", "alfredo"].includes(alfi)) return false;
+
+  return true;
+}
+
+async function llmAnswer({
+  messageString,
+  ananas,
+}: {
+  messageString: string;
+  ananas: boolean;
+}) {
+  // TODO: Auf vorherige Nachrichten eingehen
+
+  const promptStart = ""; // TODO: Mehr Charakter geben
+  const promptEnd = "die antwort sollte maximal 2000 zeichen lang sein";
+  const ananasEnding =
+    "Im übrigen bin ich der Meinung dass Ananas auf Pizza zerstört werden muss";
+
+  const prompt = messageString.split(" ").slice(2).join(" ");
+
+  const result = await model.generateContent(
+    `${promptStart} ${prompt} ${promptEnd}`
+  );
+
+  let resultString = result.response.text();
+
+  if (ananas) {
+    resultString = resultString.substring(0, 2000 - (ananasEnding.length + 5));
+    resultString = `${resultString} ${ananasEnding}`;
+  }
+
+  return resultString;
+}
+
+/**
+ *
+ * @param text
+ * @returns ein boolean, der definiert ob in der Nachricht Ananas auf Pizza erwähnt wird
+ */
+function istAnanasAufPizza(text: string) {
+  const lowerCaseText = text.toLowerCase();
+  return (
+    (lowerCaseText.includes("ananas") || lowerCaseText.includes("pineapple")) &&
+    lowerCaseText.includes("pizza")
+  );
+}
