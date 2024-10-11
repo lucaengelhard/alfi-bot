@@ -1,3 +1,5 @@
+// TODO: Custom Content über Server definierbar machen?
+
 export const ananasCopyPasta = `## Beweis durch vollständige Induktion: Ananas auf Pizza ist schrecklich
 
 **Induktionsanfang:**  
