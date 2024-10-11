@@ -36,6 +36,8 @@ client.login(token);
  *
  * TODO: besseres logging (von welchem Server kommt die Anfrage, was ist die Anfrage etc.)
  *
+ * TODO: "Halt die Schnauze Alfi" Command -> Temporär deaktivieren (vllt mit zeit argument? -> Halt die Schnauze Alfi 10 -> 10 min silence)
+ *
  */
 
 // Banger - Alle 10 Minuten besteht die Möglichkeit, dass als reaktion auf eine Nachricht Alfi sagt, wie banger die nachricht ist
