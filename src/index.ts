@@ -29,6 +29,8 @@ client.login(token);
  *
  * TODO: Schlafenszeiten des Bots (Meinte Alfi nicht, dass er zwischen 4 und 8 schläft? -> botreaktionen daktiviert oder fangen damit an, dass er eigentslich schon schlafen will)
  *
+ * TODO: Alfi geht auf vorherige nachrichten ein
+ *
  */
 
 // Banger - Alle 10 Minuten besteht die Möglichkeit, dass als reaktion auf eine Nachricht Alfi sagt, wie banger die nachricht ist
@@ -43,7 +45,7 @@ setInterval(() => {
 //Message reactions
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-  pappnasen();
+  //pappnasen();
 
   const messageString = message.content;
   const splitMessageString = messageString.split(" ");
@@ -59,6 +61,7 @@ client.on("messageCreate", async (message) => {
       const result = await model.generateContent(
         prompt + " die antwort sollte maximal 2000 zeichen lang sein"
       );
+
       message.channel.send(result.response.text().substring(0, 2000));
     } catch (error) {
       message.channel.send("Hey Sorry ich weiß auch nicht");
