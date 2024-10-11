@@ -2,13 +2,13 @@
   "name": "ao3-toolkit",
   "author": "Luca Engelhard",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/lucaengelhard/alfi-bot/issues"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/lucaengelhard/alfi-bot.git"
   },
-  "homepage": "",
+  "homepage": "https://github.com/lucaengelhard/alfi-bot",
   "license": "MIT",
   "version": "2.1.8",
   "main": "dist/index.js",
@@ -19,7 +19,8 @@
     "lint": "tsc",
     "test": "jest --silent=false",
     "release": "pnpm run build && changeset publish",
-    "run": "pnpm run build && node ."
+    "run": "pnpm run build && node .",
+    "start": "node ."
   },
   "publishConfig": {
     "access": "public"
