@@ -11,7 +11,7 @@ import {
   VoiceChannel,
 } from "discord.js";
 import { flags, model } from "./index.js";
-import { ananasCopyPasta, ananasItaly } from "./content.js";
+import { ananasCopyPasta, ananasEnding, ananasItaly } from "./content.js";
 
 /**
  *
@@ -112,8 +112,6 @@ async function llmAnswer({
 
   const promptStart = ""; // TODO: Mehr Charakter geben
   const promptEnd = "die antwort sollte maximal 2000 zeichen lang sein";
-  const ananasEnding =
-    "Im übrigen bin ich der Meinung dass Ananas auf Pizza zerstört werden muss";
 
   const prompt = messageString.split(" ").slice(2).join(" ");
 

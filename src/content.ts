@@ -23,3 +23,8 @@ Durch vollständige Induktion haben wir bewiesen, dass eine Pizza mit einer beli
 
 export const ananasItaly =
   "🇮🇹🤌🇮🇹🤌🇮🇹🤌 ANANAS AUF PIZZA IST EIN HASSVERBRECHEN 🇮🇹🤌🇮🇹🤌🇮🇹🤌";
+
+export const ananasEnding = `
+  🇮🇹🤌🇮🇹🤌🇮🇹🤌Im übrigen bin ich der Meinung dass Ananas auf Pizza zerstört werden muss🇮🇹🤌🇮🇹🤌🇮🇹🤌
+  
+  `;
