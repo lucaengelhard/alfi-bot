@@ -1,8 +1,15 @@
 import "dotenv/config";
+import fs from "fs";
+import path from "node:path";
 import { startHealthChecks } from "./health.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Client, Events, GatewayIntentBits } from "discord.js";
+import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
 import { handleMessage } from "./messages.js";
+import pg from "pg";
+import { env } from "./utils.js";
+import { TGuildMap } from "./types.js";
+import { getDBguild } from "./db/db.js";
+import { CommandKit } from "commandkit";
 
 /**
  * SETUP
@@ -11,10 +18,25 @@ import { handleMessage } from "./messages.js";
 // Open Port
 startHealthChecks();
 
+// Database
+const { Client: pgClientInit } = pg;
+export const pgclient = new pgClientInit({
+  user: env("DATABASE_USER"),
+  password: env("DATABASE_PASSWORD"),
+  host: env("DATABASE_HOST"),
+  port: env("DB_PORT") ? parseInt(env("DB_PORT") ?? "8000") : undefined,
+  database: env("DATABASE_NAME"),
+  ssl: env("ENVIRONMENT") === "dev" ? false : true,
+});
+
+await pgclient.connect();
+
+export const guildStore: TGuildMap = new Map();
+
 // Discord
 const token = process.env.DISCORD_TOKEN;
 
-const client = new Client({
+export const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -24,11 +46,29 @@ const client = new Client({
   ],
 });
 
-client.once(Events.ClientReady, (readyClient) => {
+// Commands
+new CommandKit({
+  client,
+  commandsPath: path.join(import.meta.dirname, "commands"),
+});
+
+client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+
+  for (const guild of client.guilds.cache) {
+    const guildObj = await getDBguild(guild[1]);
+    guildStore.set(guildObj.guild_id, guildObj);
+  }
 });
 
 client.login(token);
+
+client.on("guildCreate", async (guild) => {
+  const guildObj = await getDBguild(guild);
+  guildStore.set(guildObj.guild_id, guildObj);
+
+  console.log(`New Server ${guildObj.guild_id} added`);
+});
 
 // LLM
 const genAI = new GoogleGenerativeAI(process.env.API_KEY ?? "");
@@ -55,8 +95,10 @@ setInterval(() => {
   flags.bangerReady = true;
   console.log("Banger ist ready");
 }, 600000);
-/*
 
+//const res = await pgclient.query("SELECT * FROM server");
+
+/*
 
 TODO: Für die Pappnasen sich noch was ausdenken
 

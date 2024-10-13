@@ -10,7 +10,7 @@ import {
   TextChannel,
   VoiceChannel,
 } from "discord.js";
-import { flags, model } from "./index.js";
+import { flags, guildStore, model } from "./index.js";
 import { ananasCopyPasta, ananasEnding, ananasItaly } from "./content.js";
 
 /**
@@ -22,6 +22,34 @@ export async function handleMessage(
   message: OmitPartialGroupDMChannel<Message<boolean>>,
   bots?: boolean
 ) {
+  const guildObj = guildStore.get(message.guildId ?? "");
+
+  if (guildObj === undefined) {
+    console.error(
+      "Message sent to Server that is not in guildStore",
+      message.guildId
+    );
+
+    return;
+  }
+
+  // Cancel wenn channelid in den blockierten channeln und wenn nicht in den erlaubten channeln
+  if (guildObj.blocked_channel_ids?.includes(message.channelId)) {
+    console.log(
+      `Blocked Channel ${message.channelId} on ${message.guildId} (blocked Channel)`
+    );
+    return;
+  }
+  if (
+    !guildObj.all_channels &&
+    !guildObj.allowed_channel_ids?.includes(message.channelId)
+  ) {
+    console.log(
+      `Blocked Channel ${message.channelId} on ${message.guildId} (not Allowed)`
+    );
+    return;
+  }
+
   if (message.author.bot && bots === false) {
     console.log("Bot Message");
     return;

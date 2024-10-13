@@ -3,3 +3,7 @@ dist
 coverage
 .env
 data
+
+.vscode/settings.json
+
+testqueries.sql

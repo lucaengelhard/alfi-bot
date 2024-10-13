@@ -21,7 +21,8 @@
     "run": "pnpm run build && node .",
     "start": "node .",
     "docker:build": "docker build -t lucaengelhard/alfi-bot .",
-    "docker:push": "docker push lucaengelhard/alfi-bot"
+    "docker:push": "docker push lucaengelhard/alfi-bot",
+    "prod:db:build": "pnpm run build && node dist/db/setup.js"
   },
   "publishConfig": {
     "access": "public"
@@ -29,14 +30,18 @@
   "packageManager": "pnpm@9.0.0",
   "devDependencies": {
     "@types/express": "^5.0.0",
+    "@types/pg": "^8.11.10",
     "ts-node": "^10.9.2",
     "tsup": "^8.3.0",
+    "tsx": "^4.19.1",
     "typescript": "^5.6.3"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "commandkit": "^0.1.10",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "pg": "^8.13.0"
   }
 }
