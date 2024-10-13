@@ -12,6 +12,7 @@ import {
 } from "discord.js";
 import { flags, model } from "./index.js";
 import { ananasCopyPasta, ananasEnding, ananasItaly } from "./content.js";
+import { serverTable } from "./db/schema.js";
 
 /**
  *
@@ -140,4 +141,13 @@ function istAnanasAufPizza(text: string) {
     (lowerCaseText.includes("ananas") || lowerCaseText.includes("pineapple")) &&
     lowerCaseText.includes("pizza")
   );
+}
+
+function testDB(message: OmitPartialGroupDMChannel<Message<boolean>>) {
+  const server: typeof serverTable.$inferInsert = {
+    name: message.guild?.name!,
+    guild_id: message.guildId!,
+    all_channels: false,
+    allowed_channel_ids: ["qawda", "asdad"],
+  };
 }

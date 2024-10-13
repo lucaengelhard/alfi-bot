@@ -3,6 +3,7 @@ import { startHealthChecks } from "./health.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import { handleMessage } from "./messages.js";
+import { drizzle } from "drizzle-orm/connect";
 
 /**
  * SETUP
@@ -10,6 +11,18 @@ import { handleMessage } from "./messages.js";
 
 // Open Port
 startHealthChecks();
+
+// Database
+export const db = await drizzle("node-postgres", {
+  connection: {
+    host: process.env.DB_HOST!,
+    port: parseInt(process.env.DB_PORT!),
+    database: process.env.DB_DATABASE!,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    ssl: false,
+  },
+});
 
 // Discord
 const token = process.env.DISCORD_TOKEN;
@@ -104,6 +117,7 @@ setInterval(() => {
 
 /**
  * Message Interaktionen
+ * TODO: Restrict to channels (Postgres?)
  */
 client.on("messageCreate", async (message) => {
   handleMessage(message, false);
