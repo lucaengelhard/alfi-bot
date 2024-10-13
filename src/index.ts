@@ -1,9 +1,15 @@
 import "dotenv/config";
+import fs from "fs";
+import path from "node:path";
 import { startHealthChecks } from "./health.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Client, Events, GatewayIntentBits } from "discord.js";
+import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
 import { handleMessage } from "./messages.js";
-import { drizzle } from "drizzle-orm/connect";
+import pg from "pg";
+import { env } from "./utils.js";
+import { TGuildMap } from "./types.js";
+import { getDBguild } from "./db/db.js";
+import { CommandKit } from "commandkit";
 
 /**
  * SETUP
@@ -13,21 +19,23 @@ import { drizzle } from "drizzle-orm/connect";
 startHealthChecks();
 
 // Database
-export const db = await drizzle("node-postgres", {
-  connection: {
-    host: process.env.DB_HOST!,
-    port: parseInt(process.env.DB_PORT!),
-    database: process.env.DB_DATABASE!,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    ssl: false,
-  },
+const { Client: pgClientInit } = pg;
+export const pgclient = new pgClientInit({
+  user: env("DB_USERNAME"),
+  password: env("DB_PASSWORD"),
+  host: env("DB_HOST"),
+  port: parseInt(env("DB_PORT") ?? "8000"),
+  database: env("DB_DATABASE"),
 });
+
+await pgclient.connect();
+
+export const guildStore: TGuildMap = new Map();
 
 // Discord
 const token = process.env.DISCORD_TOKEN;
 
-const client = new Client({
+export const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -37,11 +45,31 @@ const client = new Client({
   ],
 });
 
-client.once(Events.ClientReady, (readyClient) => {
+// Commands
+new CommandKit({
+  client,
+  commandsPath: path.join(import.meta.dirname, "commands"),
+});
+
+client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+
+  for (const guild of client.guilds.cache) {
+    const guildObj = await getDBguild(guild[1]);
+    guildStore.set(guildObj.guild_id, guildObj);
+  }
+
+  console.log(guildStore);
 });
 
 client.login(token);
+
+client.on("guildCreate", async (guild) => {
+  const guildObj = await getDBguild(guild);
+  guildStore.set(guildObj.guild_id, guildObj);
+
+  console.log(`New Server ${guildObj.guild_id} added`);
+});
 
 // LLM
 const genAI = new GoogleGenerativeAI(process.env.API_KEY ?? "");
@@ -68,8 +96,10 @@ setInterval(() => {
   flags.bangerReady = true;
   console.log("Banger ist ready");
 }, 600000);
-/*
 
+//const res = await pgclient.query("SELECT * FROM server");
+
+/*
 
 TODO: Für die Pappnasen sich noch was ausdenken
 
@@ -117,7 +147,6 @@ setInterval(() => {
 
 /**
  * Message Interaktionen
- * TODO: Restrict to channels (Postgres?)
  */
 client.on("messageCreate", async (message) => {
   handleMessage(message, false);
