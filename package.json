@@ -21,7 +21,8 @@
     "run": "pnpm run build && node .",
     "start": "node .",
     "docker:build": "docker build -t lucaengelhard/alfi-bot .",
-    "docker:push": "docker push lucaengelhard/alfi-bot"
+    "docker:push": "docker push lucaengelhard/alfi-bot",
+    "prod:db:build": "pnpm run build && node dist/db/setup.js"
   },
   "publishConfig": {
     "access": "public"

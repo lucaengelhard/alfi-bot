@@ -21,11 +21,12 @@ startHealthChecks();
 // Database
 const { Client: pgClientInit } = pg;
 export const pgclient = new pgClientInit({
-  user: env("DB_USERNAME"),
-  password: env("DB_PASSWORD"),
-  host: env("DB_HOST"),
-  port: parseInt(env("DB_PORT") ?? "8000"),
-  database: env("DB_DATABASE"),
+  user: env("DATABASE_USER"),
+  password: env("DATABASE_PASSWORD"),
+  host: env("DATABASE_HOST"),
+  port: env("DB_PORT") ? parseInt(env("DB_PORT") ?? "8000") : undefined,
+  database: env("DATABASE_NAME"),
+  ssl: env("ENVIRONMENT") === "dev" ? false : true,
 });
 
 await pgclient.connect();
@@ -58,8 +59,6 @@ client.once(Events.ClientReady, async (readyClient) => {
     const guildObj = await getDBguild(guild[1]);
     guildStore.set(guildObj.guild_id, guildObj);
   }
-
-  console.log(guildStore);
 });
 
 client.login(token);
