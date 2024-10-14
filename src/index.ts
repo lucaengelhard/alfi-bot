@@ -18,7 +18,7 @@ import { CommandKit } from "commandkit";
 startHealthChecks();
 
 // Database
-const { Client: pgClientInit } = pg;
+const { Pool: pgClientInit } = pg;
 export const pgclient = new pgClientInit({
   user: env("DATABASE_USER"),
   password: env("DATABASE_PASSWORD"),
