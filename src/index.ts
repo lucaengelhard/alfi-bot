@@ -154,6 +154,8 @@ client.on("messageCreate", async (message) => {
  * Postgres Error Handling
  */
 
-pgclient.on("error", (error) => {
-  console.log(error);
+pgclient.on("error", async (error) => {
+  console.error("pg Error:", error);
+  await pgclient.connect();
+  console.log("pg Client reconnected");
 });
