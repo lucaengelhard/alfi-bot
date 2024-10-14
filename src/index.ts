@@ -156,6 +156,4 @@ client.on("messageCreate", async (message) => {
 
 pgclient.on("error", async (error) => {
   console.error("pg Error:", error);
-  await pgclient.connect();
-  console.log("pg Client reconnected");
 });

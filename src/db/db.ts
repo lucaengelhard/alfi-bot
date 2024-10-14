@@ -13,6 +13,7 @@ export async function getDBguild(guild: Guild) {
 
   let dbExists = false;
 
+  // TODO Parameterrize all queries https://node-postgres.com/features/queries#query-config-object
   const res = await pgclient.query(
     `SELECT * FROM server WHERE guild_id='${guild.id}'`
   );
