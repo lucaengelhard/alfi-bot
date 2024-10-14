@@ -1,5 +1,4 @@
 import "dotenv/config";
-import fs from "fs";
 import path from "node:path";
 import { startHealthChecks } from "./health.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -149,4 +148,12 @@ setInterval(() => {
  */
 client.on("messageCreate", async (message) => {
   handleMessage(message, false);
+});
+
+/**
+ * Postgres Error Handling
+ */
+
+pgclient.on("error", (error) => {
+  console.log(error);
 });
