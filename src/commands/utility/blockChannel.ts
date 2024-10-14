@@ -4,6 +4,7 @@ import type {
   CommandOptions,
 } from "commandkit";
 import { guildStore, pgPool } from "../../index.js";
+import { QueryConfig } from "pg";
 
 export const data: CommandData = {
   name: "block-channel",
@@ -16,43 +17,45 @@ export async function run({ interaction, client, handler }: SlashCommandProps) {
     interaction.reply("Error :(");
     return;
   }
-  pgclient
-    .query(
-      `UPDATE server 
+
+  const query: QueryConfig = {
+    text: `UPDATE server 
       SET blocked_channel_ids = 
 
       CASE
-        WHEN array_position(blocked_channel_ids, '${interaction.channelId}') IS NULL
-        THEN array_append(blocked_channel_ids, '${interaction.channelId}')
-        ELSE array_remove(blocked_channel_ids, '${interaction.channelId}')
+        WHEN array_position(blocked_channel_ids, $1) IS NULL
+        THEN array_append(blocked_channel_ids, $1)
+        ELSE array_remove(blocked_channel_ids, $1)
       END
-      WHERE guild_id = '${interaction.guildId}'
-      RETURNING blocked_channel_ids`
-    )
-    .then((res) => {
-      const blocked = res.rows[0].blocked_channel_ids.includes(
-        interaction.channelId
-      );
+      WHERE guild_id = $2
+      RETURNING blocked_channel_ids`,
+    values: [interaction.channelId, interaction.guildId],
+  };
 
-      const appGuild = guildStore.get(interaction.guildId!);
+  const res = await pgclient.query(query);
+  const blocked = res.rows[0].blocked_channel_ids.includes(
+    interaction.channelId
+  );
 
-      if (appGuild === undefined) {
-        interaction.reply("Error :(");
-        return;
-      }
+  const appGuild = guildStore.get(interaction.guildId!);
 
-      appGuild.blocked_channel_ids = res.rows[0].blocked_channel_ids;
+  if (appGuild === undefined) {
+    interaction.reply("Error :(");
+    return;
+  }
 
-      if (blocked) {
-        interaction.reply(`Channel ${interaction.channel} blocked`);
-      } else {
-        interaction.reply(
-          `Channel ${interaction.channel} removed from blocked channels`
-        );
-      }
+  appGuild.blocked_channel_ids = res.rows[0].blocked_channel_ids;
 
-      console.log(guildStore);
-    });
+  if (blocked) {
+    interaction.reply(`Channel ${interaction.channel} blocked`);
+  } else {
+    interaction.reply(
+      `Channel ${interaction.channel} removed from blocked channels`
+    );
+  }
+
+  console.log(guildStore);
+
   //TODO: Error handling
   //TODO: Hide Message from users (only visible for admins)
   pgclient.release();

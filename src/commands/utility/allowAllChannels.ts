@@ -4,6 +4,7 @@ import type {
   CommandOptions,
 } from "commandkit";
 import { guildStore, pgPool } from "../../index.js";
+import { QueryConfig } from "pg";
 
 export const data: CommandData = {
   name: "allow-all-channels",
@@ -16,27 +17,31 @@ export async function run({ interaction, client, handler }: SlashCommandProps) {
     interaction.reply("Error :(");
     return;
   }
-  pgclient
-    .query(
-      `UPDATE server 
-        SET all_channels = NOT all_channels
-        WHERE guild_id = '${interaction.guildId}'
-        RETURNING all_channels`
-    )
-    .then((res) => {
-      const allChannels = res.rows[0].all_channels;
 
-      const appGuild = guildStore.get(interaction.guildId!);
+  const query: QueryConfig = {
+    text: `UPDATE server 
+  SET all_channels = NOT all_chennels
+  WHERE guild_id = $1
 
-      if (appGuild === undefined) {
-        interaction.reply("Error :(");
-        return;
-      }
+  RETURNING all_channels 
+  WHERE guild_id = $1`,
+    values: [interaction.guildId],
+  };
 
-      appGuild.all_channels = allChannels;
+  const res = await pgclient.query(query);
+  const allChannels = res.rows[0].all_channels;
 
-      interaction.reply(`All Channels set to ${allChannels}`);
-    });
+  const appGuild = guildStore.get(interaction.guildId!);
+
+  if (appGuild === undefined) {
+    interaction.reply("Error :(");
+    return;
+  }
+
+  appGuild.all_channels = allChannels;
+
+  interaction.reply(`All Channels set to ${allChannels}`);
+
   //TODO: Error handling
   //TODO: Hide Message from users (only visible for admins)
   pgclient.release();
