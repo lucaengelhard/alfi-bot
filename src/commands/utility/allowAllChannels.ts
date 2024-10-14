@@ -3,7 +3,7 @@ import type {
   SlashCommandProps,
   CommandOptions,
 } from "commandkit";
-import { guildStore, pgclient } from "../../index.js";
+import { guildStore, pgPool } from "../../index.js";
 
 export const data: CommandData = {
   name: "allow-all-channels",
@@ -11,7 +11,7 @@ export const data: CommandData = {
 };
 
 export async function run({ interaction, client, handler }: SlashCommandProps) {
-  await pgclient.connect();
+  const pgclient = await pgPool.connect();
   if (interaction.guildId == null) {
     interaction.reply("Error :(");
     return;
@@ -39,5 +39,5 @@ export async function run({ interaction, client, handler }: SlashCommandProps) {
     });
   //TODO: Error handling
   //TODO: Hide Message from users (only visible for admins)
-  await pgclient.end();
+  pgclient.release();
 }

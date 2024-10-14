@@ -1,9 +1,9 @@
 import { Guild } from "discord.js";
 import { TDBGuild } from "../types.js";
-import { pgclient } from "../index.js";
+import { pgPool } from "../index.js";
 
 export async function getDBguild(guild: Guild) {
-  await pgclient.connect();
+  const pgclient = await pgPool.connect();
   const guildObj: TDBGuild = {
     guild_id: guild.id,
     guild_name: guild.name,
@@ -31,12 +31,12 @@ export async function getDBguild(guild: Guild) {
     );
     console.log(`New Server ${guild.id} | ${guild.name} registered in db`);
 
+    pgclient.release();
     return guildObj;
   } else {
     console.log(`Server ${guild.id} | ${guild.name} fetched from db`);
 
+    pgclient.release();
     return dbObj;
   }
-
-  await pgclient.end();
 }

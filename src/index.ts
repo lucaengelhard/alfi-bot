@@ -18,8 +18,8 @@ import { CommandKit } from "commandkit";
 startHealthChecks();
 
 // Database
-const { Client: pgClientInit } = pg;
-export const pgclient = new pgClientInit({
+const { Pool } = pg;
+export const pgPool = new Pool({
   user: env("DATABASE_USER"),
   password: env("DATABASE_PASSWORD"),
   host: env("DATABASE_HOST"),
@@ -152,6 +152,6 @@ client.on("messageCreate", async (message) => {
  * Postgres Error Handling
  */
 
-pgclient.on("error", async (error) => {
+pgPool.on("error", async (error) => {
   console.error("pg Error:", error);
 });
