@@ -23,8 +23,7 @@ export async function run({ interaction, client, handler }: SlashCommandProps) {
   SET all_channels = NOT all_chennels
   WHERE guild_id = $1
 
-  RETURNING all_channels 
-  WHERE guild_id = $1`,
+  RETURNING all_channels`,
     values: [interaction.guildId],
   };
 

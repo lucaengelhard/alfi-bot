@@ -24,7 +24,7 @@ export async function run({ interaction, client, handler }: SlashCommandProps) {
         END
         WHERE guild_id = $2
         RETURNING allowed_channel_ids`,
-    values: [interaction.guildId, interaction.channelId],
+    values: [interaction.channelId, interaction.guildId],
   };
 
   const res = await pgclient.query(query);
