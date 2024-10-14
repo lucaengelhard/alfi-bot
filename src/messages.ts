@@ -1,6 +1,8 @@
 import {
   DMChannel,
   Message,
+  MessageCreateOptions,
+  MessagePayload,
   NewsChannel,
   OmitPartialGroupDMChannel,
   PartialDMChannel,
@@ -104,8 +106,12 @@ export function send({
   message,
 }: {
   channel: Channel;
-  message: string;
+  message: string | MessagePayload | MessageCreateOptions;
 }) {
+  if (typeof message !== "string") {
+    // TODO: Andere Formen von Messages verarbeiten
+    return;
+  }
   const truncated = message.substring(0, 2000);
 
   try {
