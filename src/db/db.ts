@@ -3,6 +3,7 @@ import { TDBGuild } from "../types.js";
 import { pgclient } from "../index.js";
 
 export async function getDBguild(guild: Guild) {
+  await pgclient.connect();
   const guildObj: TDBGuild = {
     guild_id: guild.id,
     guild_name: guild.name,
@@ -36,4 +37,6 @@ export async function getDBguild(guild: Guild) {
 
     return dbObj;
   }
+
+  await pgclient.end();
 }

@@ -10,7 +10,8 @@ export const data: CommandData = {
   description: "Allows channel to be checked by Alfi",
 };
 
-export function run({ interaction, client, handler }: SlashCommandProps) {
+export async function run({ interaction, client, handler }: SlashCommandProps) {
+  await pgclient.connect();
   pgclient
     .query(
       `UPDATE server 
@@ -48,4 +49,5 @@ export function run({ interaction, client, handler }: SlashCommandProps) {
     });
   //TODO: Error handling
   //TODO: Hide Message from users (only visible for admins)
+  await pgclient.end();
 }

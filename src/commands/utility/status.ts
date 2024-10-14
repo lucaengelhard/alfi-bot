@@ -11,7 +11,8 @@ export const data: CommandData = {
   description: "List Alfi Status",
 };
 
-export function run({ interaction, client, handler }: SlashCommandProps) {
+export async function run({ interaction, client, handler }: SlashCommandProps) {
+  await pgclient.connect();
   pgclient
     .query(
       `SELECT * from server 
@@ -32,4 +33,6 @@ export function run({ interaction, client, handler }: SlashCommandProps) {
     });
   //TODO: Error handling
   //TODO: Hide Message from users (only visible for admins)
+
+  await pgclient.end();
 }

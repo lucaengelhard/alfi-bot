@@ -10,7 +10,8 @@ export const data: CommandData = {
   description: "Blocks channel from being checked by Alfi",
 };
 
-export function run({ interaction, client, handler }: SlashCommandProps) {
+export async function run({ interaction, client, handler }: SlashCommandProps) {
+  await pgclient.connect();
   if (interaction.guildId == null) {
     interaction.reply("Error :(");
     return;
@@ -54,4 +55,5 @@ export function run({ interaction, client, handler }: SlashCommandProps) {
     });
   //TODO: Error handling
   //TODO: Hide Message from users (only visible for admins)
+  await pgclient.end();
 }

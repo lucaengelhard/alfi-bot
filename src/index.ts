@@ -18,7 +18,7 @@ import { CommandKit } from "commandkit";
 startHealthChecks();
 
 // Database
-const { Pool: pgClientInit } = pg;
+const { Client: pgClientInit } = pg;
 export const pgclient = new pgClientInit({
   user: env("DATABASE_USER"),
   password: env("DATABASE_PASSWORD"),
@@ -27,8 +27,6 @@ export const pgclient = new pgClientInit({
   database: env("DATABASE_NAME"),
   ssl: env("ENVIRONMENT") === "dev" ? false : true,
 });
-
-await pgclient.connect();
 
 export const guildStore: TGuildMap = new Map();
 
