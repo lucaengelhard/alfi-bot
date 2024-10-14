@@ -20,7 +20,7 @@ export async function run({ interaction, client, handler }: SlashCommandProps) {
 
   const query: QueryConfig = {
     text: `UPDATE server 
-  SET all_channels = NOT all_chennels
+  SET all_channels = NOT all_channels
   WHERE guild_id = $1
 
   RETURNING all_channels`,
