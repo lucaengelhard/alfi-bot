@@ -53,8 +53,14 @@ client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 
   for (const guild of client.guilds.cache) {
-    const guildObj = await getDBguild(guild[1]);
-    guildStore.set(guildObj.guild_id, guildObj);
+    try {
+      const guildObj = await getDBguild(guild[1]);
+      guildStore.set(guildObj.guild_id, guildObj);
+    } catch (error) {
+      console.error(
+        `Error while fetching Server ${guild[1].name} | ${guild[1].id} from Database`
+      );
+    }
   }
 });
 

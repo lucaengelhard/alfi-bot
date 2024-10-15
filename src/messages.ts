@@ -14,6 +14,7 @@ import {
 } from "discord.js";
 import { flags, guildStore, model } from "./index.js";
 import { ananasCopyPasta, ananasEnding, ananasItaly } from "./content.js";
+import { env } from "./utils.js";
 
 /**
  *
@@ -24,6 +25,11 @@ export async function handleMessage(
   message: OmitPartialGroupDMChannel<Message<boolean>>,
   bots?: boolean
 ) {
+  if (message.author.bot && bots === false) {
+    console.log("Bot Message");
+    return;
+  }
+
   const guildObj = guildStore.get(message.guildId ?? "");
 
   if (guildObj === undefined) {
@@ -52,10 +58,7 @@ export async function handleMessage(
     return;
   }
 
-  if (message.author.bot && bots === false) {
-    console.log("Bot Message");
-    return;
-  }
+  message.channel.sendTyping();
   console.log(`Recieved Message: ${message.content}`);
 
   const messageString = message.content;
