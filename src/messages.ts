@@ -149,6 +149,8 @@ async function llmAnswer({
 }) {
   // TODO: Auf vorherige Nachrichten eingehen
 
+  console.log("Getting LLM Answer");
+
   const promptStart = ""; // TODO: Mehr Charakter geben
   const promptEnd = "die antwort sollte maximal 2000 zeichen lang sein";
 
