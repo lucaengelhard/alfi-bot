@@ -58,7 +58,6 @@ export async function handleMessage(
     return;
   }
 
-  message.channel.sendTyping();
   console.log(`Recieved Message: ${message.content}`);
 
   const messageString = message.content;
@@ -68,6 +67,7 @@ export async function handleMessage(
 
   // check if "hey alfi" -> exit function early
   if (checkHeyAlfi(messageString)) {
+    message.channel.sendTyping();
     resultString = await llmAnswer({
       ananas,
       messageString,
@@ -78,6 +78,7 @@ export async function handleMessage(
   }
 
   if (ananas) {
+    message.channel.sendTyping();
     if (Math.random() > 0.5) {
       send({ channel: message.channel, message: ananasItaly });
     } else {
@@ -86,6 +87,7 @@ export async function handleMessage(
   }
 
   if (flags.bangerReady && Math.random() > 0.5) {
+    message.channel.sendTyping();
     send({
       channel: message.channel,
       message: "Banger Nachricht die du da geschrieben hast",
