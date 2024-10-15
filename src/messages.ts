@@ -73,6 +73,8 @@ export async function handleMessage(
       messageString,
     });
 
+    console.log(resultString);
+
     send({ channel: message.channel, message: resultString });
     return;
   }
@@ -149,8 +151,6 @@ async function llmAnswer({
 }) {
   // TODO: Auf vorherige Nachrichten eingehen
 
-  console.log("Getting LLM Answer");
-
   const promptStart = ""; // TODO: Mehr Charakter geben
   const promptEnd = "die antwort sollte maximal 2000 zeichen lang sein";
 
@@ -159,6 +159,8 @@ async function llmAnswer({
   const result = await model.generateContent(
     `${promptStart} ${prompt} ${promptEnd}`
   );
+
+  console.log(result);
 
   let resultString = result.response.text();
 
