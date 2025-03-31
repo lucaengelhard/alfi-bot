@@ -17,7 +17,5 @@ export async function runMigrations() {
     console.log("✅ Database migration completed!");
   } catch (error) {
     console.error("❌ Migration failed:", error);
-  } finally {
-    await pgPool.end();
   }
 }
