@@ -2,6 +2,7 @@ import { Guild } from "discord.js";
 import { TDBGuild } from "../types.js";
 import { pgPool } from "../index.js";
 import { QueryConfig } from "pg";
+import { env } from "../utils.js";
 
 export async function getDBguild(guild: Guild) {
   const pgclient = await pgPool.connect();
@@ -53,6 +54,9 @@ export async function testDBConnection() {
 
     client.release(); // Release the client back to the pool
   } catch (error) {
+    console.log(env("PROD_DB_CONNECTIONSTRING"));
+
     console.error("❌ Failed to connect to PostgreSQL:", error);
+    throw error;
   }
 }
