@@ -21,7 +21,7 @@ import { CommandKit } from "commandkit";
 const { Pool } = pg;
 export const pgPool = new Pool({
   connectionString: env("DB_CONNECTIONSTRING"),
-  ssl: { rejectUnauthorized: false },
+  ssl: false,
 });
 
 await testDBConnection();
