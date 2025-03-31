@@ -1,11 +1,4 @@
-import pg from "pg";
-import { env } from "../utils.js";
-
-const { Pool } = pg;
-export const pool = new Pool({
-  connectionString: env("DB_CONNECTIONSTRING"),
-  ssl: false,
-});
+import { pgPool } from "../index.js";
 
 export async function runMigrations() {
   try {
@@ -20,11 +13,11 @@ export async function runMigrations() {
     )
     `;
 
-    await pool.query(schemaSQL);
+    await pgPool.query(schemaSQL);
     console.log("✅ Database migration completed!");
   } catch (error) {
     console.error("❌ Migration failed:", error);
   } finally {
-    await pool.end();
+    await pgPool.end();
   }
 }
