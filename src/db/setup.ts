@@ -3,7 +3,7 @@ import { pgPool } from "../index.js";
 export async function runMigrations() {
   try {
     const schemaSQL = `
-    CREATE TABLE server(
+    CREATE TABLE IF NOT EXISTS server(
       id SERIAL PRIMARY KEY,
       guild_name VARCHAR(255),
       guild_id VARCHAR(255),
