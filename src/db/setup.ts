@@ -1,6 +1,7 @@
-import { Pool } from "pg";
+import pg from "pg";
 import { env } from "../utils.js";
 
+const { Pool } = pg;
 export const pool = new Pool({
   connectionString: env("DB_CONNECTIONSTRING"),
   ssl: false,
