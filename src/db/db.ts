@@ -3,6 +3,7 @@ import { TDBGuild } from "../types.js";
 import { pgPool } from "../index.js";
 import { QueryConfig } from "pg";
 import { env } from "../utils.js";
+import { runMigrations } from "./setup.js";
 
 export async function getDBguild(guild: Guild) {
   const pgclient = await pgPool.connect();
@@ -52,7 +53,9 @@ export async function testDBConnection() {
     const res = await client.query("SELECT NOW()");
     console.log("🕒 Current Timestamp:", res.rows[0].now);
 
-    client.release(); // Release the client back to the pool
+    client.release();
+
+    await runMigrations();
   } catch (error) {
     console.error("❌ Failed to connect to PostgreSQL:", error);
   }

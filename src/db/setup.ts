@@ -1,15 +1,29 @@
-import "dotenv/config";
+import { Pool } from "pg";
 import { env } from "../utils.js";
-import pg from "pg";
 
-const { Client: pgClientInit } = pg;
-export const pgclient = new pgClientInit({
+export const pool = new Pool({
   connectionString: env("DB_CONNECTIONSTRING"),
-  ssl: true,
+  ssl: false,
 });
 
-await pgclient.connect();
+export async function runMigrations() {
+  try {
+    const schemaSQL = `
+    CREATE TABLE server(
+      id SERIAL PRIMARY KEY,
+      guild_name VARCHAR(255),
+      guild_id VARCHAR(255),
+      all_channels BOOLEAN,
+      allowed_channel_ids VARCHAR(255) [],
+      blocked_channel_ids VARCHAR(255) []
+    )
+    `;
 
-const res = await pgclient.query("SELECT * FROM server");
-
-console.log(res);
+    await pool.query(schemaSQL);
+    console.log("✅ Database migration completed!");
+  } catch (error) {
+    console.error("❌ Migration failed:", error);
+  } finally {
+    await pool.end();
+  }
+}
