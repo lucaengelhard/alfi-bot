@@ -15,16 +15,12 @@ import { CommandKit } from "commandkit";
  */
 
 // Open Port
-startHealthChecks();
+//startHealthChecks();
 
 // Database
 const { Pool } = pg;
 export const pgPool = new Pool({
-  user: env("DATABASE_USER"),
-  password: env("DATABASE_PASSWORD"),
-  host: env("DATABASE_HOST"),
-  port: env("DB_PORT") ? parseInt(env("DB_PORT") ?? "8000") : undefined,
-  database: env("DATABASE_NAME"),
+  connectionString: env("PROD_DB_CONNECTIONSTRING"),
   ssl: env("ENVIRONMENT") === "dev" ? false : true,
 });
 
@@ -58,7 +54,9 @@ client.once(Events.ClientReady, async (readyClient) => {
       guildStore.set(guildObj.guild_id, guildObj);
     } catch (error) {
       console.error(
-        `Error while fetching Server ${guild[1].name} | ${guild[1].id} from Database`
+        `Error while fetching Server ${guild[1].name} | ${
+          guild[1].id
+        } from Database`,
       );
     }
   }
@@ -79,7 +77,6 @@ export const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 /**
  * State
- *
  */
 
 // Flags
@@ -108,30 +105,30 @@ TODO: Für die Pappnasen sich noch was ausdenken
 - nach bestimmter zeit keine nachrichten zb?
 
  Je nach reaktion schreibt er hier alle Stunde, dass ja viele Pappnasen da sind, oder das es echt wenige sind (maybe mit schlafenszeiten? damit nicht nachts die ganze zeit notifications kommen?)
- 
+
 setInterval(() => {
     pappnasen();
   }, 3600000);
-  
+
   function pappnasen() {
     client.guilds.cache.forEach((guild) => {
       const channels = guild.channels.cache.filter((channel) =>
         ["nebenthemen", "allgemein", "general"].includes(channel.name)
       );
-  
+
       const channelNames = channels.map((channel) => channel.name);
-  
+
       const users = guild?.members.cache;
-  
+
       const usersNoBots = users.filter((member) => !member.user.bot);
       const userNotBotsArray = usersNoBots.map((user) => user);
-  
+
       const usersOnline = usersNoBots.filter(
         (member) =>
           member.presence &&
           ["online", "idle" /"dnd"/].includes(member.presence.status)
       );
-  
+
       const usersOnlineArray = usersOnline.map((user) => user);
       const sendChannel = channels.at(0);
       if (usersOnlineArray.length >= userNotBotsArray.length / 2) {
