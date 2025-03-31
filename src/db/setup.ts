@@ -4,7 +4,7 @@ import pg from "pg";
 
 const { Client: pgClientInit } = pg;
 export const pgclient = new pgClientInit({
-  connectionString: env("PROD_DB_CONNECTIONSTRING"),
+  connectionString: env("DB_CONNECTIONSTRING"),
   ssl: true,
 });
 

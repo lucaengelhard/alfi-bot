@@ -20,7 +20,7 @@ import { CommandKit } from "commandkit";
 // Database
 const { Pool } = pg;
 export const pgPool = new Pool({
-  connectionString: env("PROD_DB_CONNECTIONSTRING"),
+  connectionString: env("DB_CONNECTIONSTRING"),
   ssl: env("ENVIRONMENT") === "dev" ? false : true,
 });
 

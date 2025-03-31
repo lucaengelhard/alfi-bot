@@ -54,7 +54,7 @@ export async function testDBConnection() {
 
     client.release(); // Release the client back to the pool
   } catch (error) {
-    console.log(env("PROD_DB_CONNECTIONSTRING"));
+    console.log(env("DB_CONNECTIONSTRING"));
 
     console.error("❌ Failed to connect to PostgreSQL:", error);
     throw error;
