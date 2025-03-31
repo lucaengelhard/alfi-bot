@@ -29,9 +29,7 @@ export async function getDBguild(guild: Guild) {
 
   if (!dbExists) {
     const res = await pgclient.query(
-      `INSERT INTO server(guild_name, guild_id,all_channels) VALUES ('${
-        guild.name
-      }', '${guild.id}', ${false})`
+      `INSERT INTO server(guild_name, guild_id,all_channels) VALUES ('${guild.name}', '${guild.id}', ${false})`,
     );
     console.log(`New Server ${guild.id} | ${guild.name} registered in db`);
 
@@ -42,5 +40,19 @@ export async function getDBguild(guild: Guild) {
 
     pgclient.release();
     return dbObj;
+  }
+}
+
+export async function testDBConnection() {
+  try {
+    const client = await pgPool.connect();
+    console.log("✅ Connected to PostgreSQL successfully!");
+
+    const res = await client.query("SELECT NOW()");
+    console.log("🕒 Current Timestamp:", res.rows[0].now);
+
+    client.release(); // Release the client back to the pool
+  } catch (error) {
+    console.error("❌ Failed to connect to PostgreSQL:", error);
   }
 }

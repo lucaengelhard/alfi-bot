@@ -7,7 +7,7 @@ import { handleMessage } from "./messages.js";
 import pg from "pg";
 import { env } from "./utils.js";
 import { TGuildMap } from "./types.js";
-import { getDBguild } from "./db/db.js";
+import { getDBguild, testDBConnection } from "./db/db.js";
 import { CommandKit } from "commandkit";
 
 /**
@@ -23,6 +23,8 @@ export const pgPool = new Pool({
   connectionString: env("PROD_DB_CONNECTIONSTRING"),
   ssl: env("ENVIRONMENT") === "dev" ? false : true,
 });
+
+await testDBConnection();
 
 export const guildStore: TGuildMap = new Map();
 
